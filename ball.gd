@@ -9,7 +9,7 @@ signal right_col
 func _ready() -> void:
 	player = get_tree().get_first_node_in_group("pong_left")
 func _process(delta: float) -> void:
-	if get_linear_velocity().x < 1:
+	if get_linear_velocity().x < 1 and get_linear_velocity().x > -1:
 		respawn() 
 
 func _on_area_2d_body_entered(body: Node2D) -> void:

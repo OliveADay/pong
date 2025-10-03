@@ -35,6 +35,7 @@ func loadBscore():
 
 func _on_counterpong_broken() -> void:
 	$intro.visible = true
+	$AudioStreamPlayer2D.play()
 
 
 func _on_pong_hit_after_broken() -> void:

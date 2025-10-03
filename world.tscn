@@ -1,17 +1,21 @@
-[gd_scene load_steps=13 format=3 uid="uid://bakhyn15luwuf"]
+[gd_scene load_steps=17 format=3 uid="uid://bakhyn15luwuf"]
 
 [ext_resource type="Texture2D" uid="uid://bmaj2pdv2akan" path="res://pong-Sheet.png" id="1_f3sb7"]
 [ext_resource type="Script" uid="uid://bm3hm87511ubn" path="res://pong_movment.gd" id="1_fj7yv"]
+[ext_resource type="AudioStream" uid="uid://cpew42rf16dug" path="res://hit.wav" id="3_gbfbk"]
 [ext_resource type="PackedScene" uid="uid://bxevymji3t5c0" path="res://ball.tscn" id="3_tlwt5"]
 [ext_resource type="Script" uid="uid://33yy4relrhpf" path="res://counterpong.gd" id="4_aqk2v"]
+[ext_resource type="AudioStream" uid="uid://dd3bm34bywyvn" path="res://switch.wav" id="4_ioo17"]
 [ext_resource type="FontFile" uid="uid://dt007sswc7ew3" path="res://04B_11_.TTF" id="5_036b0"]
+[ext_resource type="AudioStream" uid="uid://cdxw1jw8k1cp4" path="res://brake.wav" id="5_pkg7o"]
 [ext_resource type="Script" uid="uid://csaogbh8500lv" path="res://score.gd" id="6_dwbse"]
+[ext_resource type="AudioStream" uid="uid://csxj78nc8rddd" path="res://blip.wav" id="10_wse8f"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_f3sb7"]
 size = Vector2(16, 32)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_aqk2v"]
-size = Vector2(17, 32)
+size = Vector2(18, 34)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fj7yv"]
 size = Vector2(1046, 20)
@@ -50,8 +54,13 @@ collision_layer = 0
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="pong/Area2D"]
-position = Vector2(0.5, 0)
 shape = SubResource("RectangleShape2D_aqk2v")
+
+[node name="hit" type="AudioStreamPlayer2D" parent="pong"]
+stream = ExtResource("3_gbfbk")
+
+[node name="switch" type="AudioStreamPlayer2D" parent="pong"]
+stream = ExtResource("4_ioo17")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 z_index = -1
@@ -110,6 +119,9 @@ vframes = 3
 [node name="CollisionShape2D" type="CollisionShape2D" parent="counterpong"]
 shape = SubResource("RectangleShape2D_036b0")
 
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="counterpong"]
+stream = ExtResource("5_pkg7o")
+
 [node name="Label" type="Label" parent="."]
 texture_filter = 1
 offset_left = 236.0
@@ -137,7 +149,12 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 8
 text = "press d or right"
 
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="Label"]
+stream = ExtResource("10_wse8f")
+
 [connection signal="hit_after_broken" from="pong" to="Label" method="_on_counterpong_broken"]
 [connection signal="right_hit_after_broken" from="pong" to="Label" method="_on_pong_hit_after_broken"]
 [connection signal="body_entered" from="pong/Area2D" to="pong" method="_on_area_2d_body_entered"]
 [connection signal="right_col" from="ball" to="counterpong" method="_on_ball_right_col"]
+[connection signal="broken" from="counterpong" to="pong" method="_on_counterpong_broken"]
+[connection signal="finished" from="counterpong/AudioStreamPlayer2D" to="counterpong" method="brake"]

@@ -8,6 +8,7 @@ var best_score = 0
 var scoreFilePath = "user://score.cfg"
 signal hit_after_broken
 var has_been_hit_after_broken = false
+var rightmov = false
 signal right_hit_after_broken
 
 func _ready() -> void:
@@ -19,13 +20,16 @@ func _physics_process(delta: float) -> void:
 	vert = Input.get_axis("down","up");
 	if hit_amount == 30:
 		$Sprite2D.frame = 7
-	if hit_amount >= 15 or best_score >= 15:
+	if rightmov:
 		if Input.is_action_just_pressed("right"):
 			default_x = 619
 			position.x = 619
+			right_hit_after_broken.emit()
+			$switch.play()
 		if Input.is_action_just_pressed("left"):
 			default_x = 21
 			position.x = 21
+			$switch.play()
 	velocity = Vector2(velocity.x,speed*-vert)
 	move_and_slide()
 	if timer == 60:
@@ -44,10 +48,14 @@ func loadBscore():
 	print(best_score)
 
 func _on_area_2d_body_entered(body: Node2D) -> void:
-	if hit_amount >= 15 or best_score >= 15 and not has_been_hit_after_broken:
+	if rightmov and not has_been_hit_after_broken:
 		hit_after_broken.emit()
 		has_been_hit_after_broken = true
-	elif has_been_hit_after_broken:
-		right_hit_after_broken.emit()
+		print("hit after broke")
 	hit_amount +=1
+	$hit.play()
 		
+
+
+func _on_counterpong_broken() -> void:
+	rightmov = true

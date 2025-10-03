@@ -10,10 +10,13 @@ var broken_pong_ref= preload("res://broken_c_pong.tscn")
 var frame_1_change_happened = false
 var frame_2_change_happened = false
 var broken_change_happened = false
+signal broken
 
 func _ready() -> void:
 	player = get_tree().get_first_node_in_group("pong_left")
 	loadBscore()
+	if best_score >= 15:
+		$Sprite2D.frame = 2
 
 func _physics_process(delta: float) -> void:
 	if timer == 60:
@@ -37,15 +40,19 @@ func loadBscore():
 	print(best_score)
 
 func _on_ball_right_col() -> void:
-	if (player.hit_amount == 5 and not frame_1_change_happened and not frame_2_change_happened) or (best_score >= 5 and best_score < 10):
+	if (player.hit_amount == 5 and not frame_1_change_happened and not frame_2_change_happened):
 		$Sprite2D.frame = 1
 		frame_1_change_happened = true
-	if (player.hit_amount == 10 and not frame_2_change_happened) or (best_score >= 10 and best_score < 15):
+	if (player.hit_amount == 10 and not frame_2_change_happened):
 		$Sprite2D.frame = 2
 		frame_2_change_happened = true
 	if (player.hit_amount == 15 and not broken_change_happened) or (best_score >= 15):
-		broken_change_happened = true
-		var broken_pong = broken_pong_ref.instantiate()
-		add_child(broken_pong)
-		broken_pong.reparent(get_tree().root)
-		queue_free()
+		$AudioStreamPlayer2D.play()
+		
+func brake():
+	broken_change_happened = true
+	broken.emit()
+	var broken_pong = broken_pong_ref.instantiate()
+	add_child(broken_pong)
+	broken_pong.reparent(get_tree().root)
+	queue_free()
