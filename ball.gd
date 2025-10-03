@@ -8,14 +8,19 @@ signal right_col
 
 func _ready() -> void:
 	player = get_tree().get_first_node_in_group("pong_left")
+func _process(delta: float) -> void:
+	if get_linear_velocity().x < 1:
+		respawn() 
 
 func _on_area_2d_body_entered(body: Node2D) -> void:
+	respawn()
+
+func respawn():
 	player.hit_amount = 0
 	var ball_2 = ballRes.instantiate()
 	get_tree().root.add_child(ball_2)
 	ball_2.position = Vector2(304,145)
 	queue_free()
-
 
 func _on_left_col_body_entered(body: Node2D) -> void:
 	set_linear_velocity(Vector2(-(body.position.x-position.x)*speed,-(body.position.y-position.y)*speed*2))

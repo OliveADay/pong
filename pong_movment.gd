@@ -44,10 +44,10 @@ func loadBscore():
 	print(best_score)
 
 func _on_area_2d_body_entered(body: Node2D) -> void:
-	hit_amount +=1
 	if hit_amount >= 15 or best_score >= 15 and not has_been_hit_after_broken:
 		hit_after_broken.emit()
 		has_been_hit_after_broken = true
 	elif has_been_hit_after_broken:
 		right_hit_after_broken.emit()
+	hit_amount +=1
 		

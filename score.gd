@@ -11,8 +11,8 @@ func _process(delta: float) -> void:
 	text = "score: "+str(player.hit_amount)
 	if timer <= 0:
 		if player.hit_amount > best_score:
-			#saveBScore()
-			pass
+			saveBScore()
+			
 		timer = 2
 	else:
 		timer -= delta
