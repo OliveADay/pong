@@ -1,3 +1,143 @@
-[gd_scene format=3 uid="uid://bakhyn15luwuf"]
+[gd_scene load_steps=13 format=3 uid="uid://bakhyn15luwuf"]
+
+[ext_resource type="Texture2D" uid="uid://bmaj2pdv2akan" path="res://pong-Sheet.png" id="1_f3sb7"]
+[ext_resource type="Script" uid="uid://bm3hm87511ubn" path="res://pong_movment.gd" id="1_fj7yv"]
+[ext_resource type="PackedScene" uid="uid://bxevymji3t5c0" path="res://ball.tscn" id="3_tlwt5"]
+[ext_resource type="Script" uid="uid://33yy4relrhpf" path="res://counterpong.gd" id="4_aqk2v"]
+[ext_resource type="FontFile" uid="uid://dt007sswc7ew3" path="res://04B_11_.TTF" id="5_036b0"]
+[ext_resource type="Script" uid="uid://csaogbh8500lv" path="res://score.gd" id="6_dwbse"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_f3sb7"]
+size = Vector2(16, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_aqk2v"]
+size = Vector2(17, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fj7yv"]
+size = Vector2(1046, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tlwt5"]
+size = Vector2(20, 360)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_036b0"]
+size = Vector2(16, 32)
+
+[sub_resource type="Theme" id="Theme_dwbse"]
+default_font = ExtResource("5_036b0")
+default_font_size = 16
 
 [node name="World" type="Node2D"]
+
+[node name="pong" type="CharacterBody2D" parent="." groups=["pong_left"]]
+position = Vector2(21, 154)
+collision_layer = 5
+floor_stop_on_slope = false
+floor_block_on_wall = false
+platform_on_leave = 2
+script = ExtResource("1_fj7yv")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="pong"]
+texture = ExtResource("1_f3sb7")
+hframes = 3
+vframes = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="pong"]
+shape = SubResource("RectangleShape2D_f3sb7")
+
+[node name="Area2D" type="Area2D" parent="pong"]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="pong/Area2D"]
+position = Vector2(0.5, 0)
+shape = SubResource("RectangleShape2D_aqk2v")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+z_index = -1
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0, 0, 0, 1)
+
+[node name="ground" type="StaticBody2D" parent="."]
+position = Vector2(10, 370)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ground"]
+position = Vector2(318, 0)
+shape = SubResource("RectangleShape2D_fj7yv")
+
+[node name="ceiling" type="StaticBody2D" parent="."]
+position = Vector2(6, -10)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ceiling"]
+position = Vector2(313, 0)
+shape = SubResource("RectangleShape2D_fj7yv")
+
+[node name="ball" parent="." instance=ExtResource("3_tlwt5")]
+position = Vector2(304, 145)
+
+[node name="wall_right" type="StaticBody2D" parent="."]
+collision_layer = 8
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="wall_right"]
+position = Vector2(672, 180)
+shape = SubResource("RectangleShape2D_tlwt5")
+
+[node name="wall_left" type="StaticBody2D" parent="."]
+position = Vector2(-708, 0)
+collision_layer = 8
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="wall_left"]
+position = Vector2(672, 180)
+shape = SubResource("RectangleShape2D_tlwt5")
+
+[node name="counterpong" type="RigidBody2D" parent="." groups=["pong_right"]]
+position = Vector2(619, 154)
+collision_layer = 65
+gravity_scale = 0.0
+lock_rotation = true
+freeze = true
+freeze_mode = 1
+script = ExtResource("4_aqk2v")
+
+[node name="Sprite2D" type="Sprite2D" parent="counterpong"]
+texture = ExtResource("1_f3sb7")
+hframes = 3
+vframes = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="counterpong"]
+shape = SubResource("RectangleShape2D_036b0")
+
+[node name="Label" type="Label" parent="."]
+texture_filter = 1
+offset_left = 236.0
+offset_top = 1.0
+offset_right = 320.0
+offset_bottom = 24.0
+theme = SubResource("Theme_dwbse")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+text = "score: "
+script = ExtResource("6_dwbse")
+
+[node name="intro" type="Label" parent="Label"]
+visible = false
+texture_filter = 1
+layout_mode = 0
+offset_left = -18.0
+offset_top = 311.0
+offset_right = 180.0
+offset_bottom = 334.0
+theme = SubResource("Theme_dwbse")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+text = "press d or right"
+
+[connection signal="hit_after_broken" from="pong" to="Label" method="_on_counterpong_broken"]
+[connection signal="right_hit_after_broken" from="pong" to="Label" method="_on_pong_hit_after_broken"]
+[connection signal="body_entered" from="pong/Area2D" to="pong" method="_on_area_2d_body_entered"]
+[connection signal="right_col" from="ball" to="counterpong" method="_on_ball_right_col"]

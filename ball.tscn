@@ -1,0 +1,53 @@
+[gd_scene load_steps=5 format=3 uid="uid://bxevymji3t5c0"]
+
+[ext_resource type="Script" uid="uid://vb0r7o4cxsxo" path="res://ball.gd" id="1_41u45"]
+[ext_resource type="Texture2D" uid="uid://72wcxyxy3mhi" path="res://ball.png" id="2_ktgx5"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_tlwt5"]
+friction = 0.0
+bounce = 10.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_aqk2v"]
+radius = 5.0
+
+[node name="ball" type="RigidBody2D" groups=["ball"]]
+collision_layer = 3
+physics_material_override = SubResource("PhysicsMaterial_tlwt5")
+gravity_scale = 0.0
+freeze_mode = 1
+contact_monitor = true
+linear_velocity = Vector2(300, 100)
+script = ExtResource("1_41u45")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_aqk2v")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("2_ktgx5")
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_aqk2v")
+
+[node name="left_col" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="left_col"]
+shape = SubResource("CircleShape2D_aqk2v")
+
+[node name="right_col" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 64
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="right_col"]
+shape = SubResource("CircleShape2D_aqk2v")
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
+[connection signal="body_entered" from="left_col" to="." method="_on_left_col_body_entered"]
+[connection signal="body_entered" from="right_col" to="." method="_on_right_col_body_entered"]
